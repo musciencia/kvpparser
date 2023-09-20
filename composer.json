@@ -5,12 +5,12 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Artkoder\\Kvpparser\\": "src/"
+            "ArtKoder\\KvpParser\\": "src/"
         }
     },
     "authors": [
         {
-            "name": "Francisco",
+            "name": "Francisco Fernandez",
             "email": "musciencia@gmail.com"
         }
     ],
