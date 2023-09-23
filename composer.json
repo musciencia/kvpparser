@@ -21,6 +21,6 @@
         "test": "./vendor/bin/phpunit"
     },
     "archive": {
-        "exclude": ["tests", "phpunit.xml"]
+        "exclude": ["/tests/", "/phpunit.xml"]
     }
 }
