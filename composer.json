@@ -8,11 +8,6 @@
             "ArtKoder\\KvpParser\\": "src/"
         }
     },
-    "autoload-dev": {
-        "psr-4": {
-            "Tests\\Unit\\": "tests/unit"
-        }
-    },
     "authors": [
         {
             "name": "Francisco Fernandez",
@@ -24,5 +19,8 @@
     },
     "scripts": {
         "test": "./vendor/bin/phpunit"
+    },
+    "archive": {
+        "exclude": ["tests", "phpunit.xml"]
     }
 }
