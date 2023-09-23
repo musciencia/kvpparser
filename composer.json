@@ -8,6 +8,11 @@
             "ArtKoder\\KvpParser\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
     "authors": [
         {
             "name": "Francisco Fernandez",
