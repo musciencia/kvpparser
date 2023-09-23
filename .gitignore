@@ -3,3 +3,4 @@ composer.phar
 /sandbox/
 /data/
 /nbproject/
+/.phpunit.result.cache

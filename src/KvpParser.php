@@ -101,20 +101,19 @@ class KvpParser
         $item = [];
         
         while (($line = fgets($filePointer)) !== false) {
-            $line = trim($line);
-
-            // Ignore lines starting with # to allow comments
-            if (substr($line, 0, 1) === "#") {
-                continue;
-            }
+//            $trimmedLine = trim($line);
+//
+//            // Ignore lines starting with # to allow comments
+//            if (substr($line, 0, 1) === "#") {
+//                continue;
+//            }
             
 
-            if (empty($line) && !empty($item)) {
+            if (empty(trim($line)) && !empty($item)) {
                 $data[] = $item;
                 $item = [];
             } else {
-                list($key, $value) = explode(": ", $line, 2);
-                $item[$key] = $value;
+                self::parseLine($line, $item);
             }
         }
             
@@ -150,7 +149,6 @@ class KvpParser
     {
         $rows = array_map('str_getcsv', file($fileIn));
         $header = array_shift($rows);
-        print_r($header);
 
         $kdpContent = '';
         foreach ($rows as $rowData) {
@@ -175,5 +173,24 @@ class KvpParser
             $kdpContent .= "\n";
         }
         file_put_contents($fileOut, $kdpContent);
+    }
+    
+    public static function parseLine($line, &$addToArray): void
+    {
+        $trimmedLine = trim($line);
+        // If line is empty, do nothing
+        if (empty($trimmedLine)) {
+            return;
+        }
+        
+        // Ignore comments starting with hash tag
+        if (str_starts_with($trimmedLine, '#')) {
+            return;
+        }
+        
+        $substrings = explode(":", $trimmedLine, 2);
+        $key = isset($substrings[0]) ? trim($substrings[0]) : '';
+        $value = isset($substrings[1]) ? trim($substrings[1]) : '';
+        $addToArray[$key] = $value;
     }
 }

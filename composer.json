@@ -10,7 +10,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\": "tests/"
+            "Tests\\Unit\\": "tests/unit"
         }
     },
     "authors": [
@@ -19,5 +19,10 @@
             "email": "musciencia@gmail.com"
         }
     ],
-    "require": {}
+    "require-dev": {
+        "phpunit/phpunit": "^10.3"
+    },
+    "scripts": {
+        "test": "./vendor/bin/phpunit"
+    }
 }
