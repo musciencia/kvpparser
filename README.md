@@ -37,6 +37,14 @@ I started using this type of file in different projects because it's similar to 
 the nesting and it's parsing complexity. So I decided to build a library to make the code
 reusable.
 
+## Installation
+
+### Using composer
+
+```shell
+composer require artkoder/kvpparser
+```
+
 ## How to use this library
 
 Here are some examples:
