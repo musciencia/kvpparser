@@ -184,6 +184,24 @@ and format date to be `Y-m-d`.
 Here is how you would do it:
 
 ```php
+function formatDate($data) {
+    $inputDate = $data['Transaction Date'];
+    $inputFormat = 'm/d/Y';
+    $outputFormat = 'Y-m-d';
+    // Create a DateTime object from the input date with the specified format
+    $dateTime = DateTime::createFromFormat($inputFormat, $inputDate);
+
+    // Check for errors in parsing the date
+    if ($dateTime === false) {
+        return false; // Return false if the parsing fails
+    }
+
+    // Format the DateTime object in the desired output format
+    $formattedDate = $dateTime->format($outputFormat);
+
+    return $formattedDate;
+}
+
 $columnMap = [
     "Date" => 'formatDate',
     "Account" => "Account Number",
