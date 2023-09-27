@@ -148,7 +148,11 @@ Here is what we can do:
 ```php
 $csvFile = __DIR__ . '/../data/transactions.csv';
 $kdpFile = __DIR__ . '/../data/transactions.kdp';
-$columnMap = ["Transaction Date" => "Date", "Description 1" => "Description", "CAD$" => "Amount"];
+$columnMap = [
+    "Date" => "Transaction Date", 
+    "Description" => "Description 1",
+    "Amount" => "CAD$"
+];
 KvpParser::csvToKvp($csvFile, $kdpFile, $columnMap);
 ```
 
@@ -170,3 +174,25 @@ Amount: -129.12
 
 If no `$columnMap` is specified, the column names in the `csv` file will 
 become the name of the properties in the `kvp` file.
+
+Some times you need to do some processing of data during mapping, we can
+do that adding closures to the map array.
+
+In our previous example, suppose you want ot combine both description columns
+and format date to be `Y-m-d`.
+
+Here is how you would do it:
+
+```php
+$columnMap = [
+    "Date" => 'formatDate',
+    "Account" => "Account Number",
+    "Description" => function($data) { return $data['Description 1'] . " - " . $data['Description 2']; },
+    "Amount" => "CAD$",
+    "Category" => "uncategorized"];
+
+KvpParser::csvToKvp($csvFile, $kdpFile, $columnMap);
+```
+
+Notice also that the column `uncategorized` does not exist. In this case
+the word `uncategorized` would be use as the value.

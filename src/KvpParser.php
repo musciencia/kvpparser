@@ -87,28 +87,16 @@ class KvpParser
      */
     public static function parseFile(string $filePath): array|false
     {
-        if (!file_exists($filePath)) {
-            return false;
-        }
+        if (!file_exists($filePath)) { return false; }
 
         $filePointer = fopen($filePath, 'r');
 
-        if ($filePointer === false) {
-            return false;
-        }
+        if ($filePointer === false) { return false ; }
 
         $data = []; 
         $item = [];
         
         while (($line = fgets($filePointer)) !== false) {
-//            $trimmedLine = trim($line);
-//
-//            // Ignore lines starting with # to allow comments
-//            if (substr($line, 0, 1) === "#") {
-//                continue;
-//            }
-            
-
             if (empty(trim($line)) && !empty($item)) {
                 $data[] = $item;
                 $item = [];
@@ -134,7 +122,7 @@ class KvpParser
      *   first,last,age
      *   john,doe,35
      * 
-     * $columnMap = ['first' => 'First Name', 'last' => 'Last Name', 'age' => 'Age']
+     * $columnMap = ['First Name' => 'first', 'Last Name' => 'last', 'Age'  => 'age']
      * 
      * Will produce:
      *    First Name: john
@@ -143,36 +131,56 @@ class KvpParser
      * 
      * @param string $fileIn   The path to the CSV file to read
      * @param string $fileOut  The path to the KVP file to write
-     * @param array $columnMap The key specifies the CSV column and the value is the name it will become in the
+     * @param array $columnMap The key specifies the property in the KVP file and the value is the CSV column
      */
     public static function csvToKvp(string $fileIn, string $fileOut, array $columnMap = [])
     {
-        $rows = array_map('str_getcsv', file($fileIn));
-        $header = array_shift($rows);
-
+        $lines = file($fileIn,  FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        
+        $header = str_getcsv(array_shift($lines));
+        
+        $rows = array_map(function ($line) use ($header) {
+            $values = str_getcsv($line);
+            return array_combine($header, $values);
+        }, $lines);
+        
         $kdpContent = '';
+                
         foreach ($rows as $rowData) {
-            // Skip empty lines including the last one
-            if (empty($rowData[0])) {
-                continue;
-            }
-
-            foreach($rowData as $index => $value) {
-                if (empty($columnMap)) {
-                    $key =  $header[$index];    
-                } else {
-                    // Skip values not included in the column map
-                    if (!isset($columnMap[$header[$index]])) {
-                        continue;
-                    }
-                    $key = $columnMap[$header[$index]];
-                }
-
-                $kdpContent .= "$key: $value\n"; 
-            }
-            $kdpContent .= "\n";
+            $kdpContent .= self::mapColumnsToProperties($rowData, $columnMap) . "\n";
         }
         file_put_contents($fileOut, $kdpContent);
+    }
+    
+    public static function mapColumnsToProperties($rowData, $columnMap = [])
+    {   
+        $kvpContent = '';
+        if (empty($columnMap)) {
+            foreach ($rowData as $property => $value) {
+                $kvpContent .= "$property: $value\n";
+            }
+        } else {
+            foreach ($columnMap as $kvpProperty => $csvColumn) {
+                if (is_callable($csvColumn)) {
+                    $value = call_user_func($csvColumn, $rowData);
+                } else {
+                    $value = $rowData[$csvColumn] ?? $csvColumn;                
+                }
+                
+                $kvpContent .= "$kvpProperty: $value\n";
+            }
+        }
+        return $kvpContent;
+    }
+    
+    public static function concatenateValues($rowData, $flippedHeader, $csvColumns)
+    {
+        $values = [];
+        foreach($csvColumns as $csvColumn) {
+            $index = $flippedHeader[$csvColumn] ?? -1;
+            $values [] = $rowData[$index] ?? $csvColumn; 
+        }
+        return implode(' ', $values);
     }
     
     public static function parseLine($line, &$addToArray): void
