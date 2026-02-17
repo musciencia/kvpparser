@@ -205,9 +205,12 @@ function formatDate($data) {
 $columnMap = [
     "Date" => 'formatDate',
     "Account" => "Account Number",
-    "Description" => function($data) { return $data['Description 1'] . " - " . $data['Description 2']; },
+    "Description" => function($data) { 
+        return $data['Description 1'] . " - " . $data['Description 2']; 
+    },
     "Amount" => "CAD$",
-    "Category" => "uncategorized"];
+    "Category" => "uncategorized"
+    ];
 
 KvpParser::csvToKvp($csvFile, $kdpFile, $columnMap);
 ```
